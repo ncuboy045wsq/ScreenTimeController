@@ -12,7 +12,12 @@
 /captures
 .externalNativeBuild
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 .cxx
 local.properties
 >>>>>>> 8598aec (Init screen controller app)
+=======
+.cxx
+local.properties
+>>>>>>> 3ffa925 (Init screen controller app)
