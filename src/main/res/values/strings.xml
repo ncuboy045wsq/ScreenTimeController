@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ScreenTimeController</string>
+    <string name="daily_average">日均</string>
+    <string name="float_value_change_from_last_week">与上周比浮动</string>
+    <string name="daily_average_regex">%s小时%s分钟</string>
+    <string name="view_all_activities">查看所有活动</string>
+    <string name="update_time_regex">更新于: %s</string>
+    <string name="stop_time">停用时间</string>
+    <string name="set_block_up_time">设置停用时间</string>
+    <string name="application_time_limit">应用限额</string>
+    <string name="always_allow">始终允许</string>
+    <string name="screen_time_controller">屏幕使用时间</string>
+    <string name="set_task_max_usage">设置最大使用时长</string>
+</resources>

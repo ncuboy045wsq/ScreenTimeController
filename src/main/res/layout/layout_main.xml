@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/screen_time_controller" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="-2dp"
+                android:text="@string/daily_average"
+                android:textSize="12dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_usageFloatInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_floatValueChangeLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_launcher_background"
+                        android:text="@string/float_value_change_from_last_week" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10%" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_dailyAverageInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/ll_usageFloatInfo"
+                    android:maxWidth="150dp"
+                    android:text="@string/daily_average_regex"
+                    android:textSize="30dp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_screenUsageByDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/ll_viewAllActivities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:text="@string/view_all_activities" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right"
+                    android:layout_weight="0"
+                    android:src="@drawable/ic_launcher_background" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_updateTime"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="#F8F8FF"
+                android:text="@string/update_time_regex" />
+
+            <Button
+                android:id="@+id/bt_stopTime"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/stop_time" />
+
+            <Button
+                android:id="@+id/bt_appTimeLimit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/application_time_limit" />
+
+            <Button
+                android:id="@+id/bt_alwayAllows"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/always_allow" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
