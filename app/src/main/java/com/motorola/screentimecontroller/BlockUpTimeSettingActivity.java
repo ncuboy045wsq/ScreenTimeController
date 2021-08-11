@@ -62,7 +62,6 @@ public class BlockUpTimeSettingActivity extends Activity {
                     screenBlockUpTime.setEndTime(endTime);
                     mStartTime = 0;
                     try {
-
                         long addCount = MotoExtendManager.getInstance(BlockUpTimeSettingActivity.this).addScreenBlockUpTime(screenBlockUpTime);
 
                         if (addCount > 0) {
