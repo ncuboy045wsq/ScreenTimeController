@@ -58,11 +58,13 @@ public class TaskUsageInfoActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int i) {
-            TaskUsageInfoWeekFragment taskUsageInfoFragment = new TaskUsageInfoWeekFragment();
+            Fragment taskUsageInfoFragment = null;
             Bundle bundle = new Bundle();
             if (i == 0) {
+                taskUsageInfoFragment = new TaskUsageInfoWeekFragment();
                 bundle.putInt(TaskUsageInfoWeekFragment.KEY_TYPE, TaskUsageInfoWeekFragment.TYPE.WEEK);
             } else {
+                taskUsageInfoFragment = new TaskUsageInfoDailyFragment();
                 bundle.putInt(TaskUsageInfoWeekFragment.KEY_TYPE, TaskUsageInfoWeekFragment.TYPE.DAILY);
             }
             taskUsageInfoFragment.setArguments(bundle);

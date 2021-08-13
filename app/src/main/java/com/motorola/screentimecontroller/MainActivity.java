@@ -2,7 +2,6 @@ package com.motorola.screentimecontroller;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -188,111 +187,18 @@ public class MainActivity extends Activity {
     }
 
     private void updateDailyAverage(Calendar calendar) {
-
-        int totalDay = 0;
-        long totalUsage = 0;
-        if (calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek() > 0) {
-            totalDay = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
-        } else {
-            totalDay = calendar.get(Calendar.DAY_OF_WEEK) + 7 - calendar.getFirstDayOfWeek();
-        }
-
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        Set<Integer> weekDayKeys = mTaskUsageInfosWeek.keySet();
-        long weekUsage = 0;
-        for (Integer weekDayKey : weekDayKeys) {
-            Map<Integer, Long> usageByHour = mTaskUsageInfosWeek.get(weekDayKey);
-            if (usageByHour != null) {
-                Set<Integer> usageByHourKeys = usageByHour.keySet();
-                for (Integer usageByHourKey : usageByHourKeys) {
-                    Long usage = usageByHour.get(usageByHourKey);
-                    if (usage != null) {
-                        totalUsage += usage;
-                        weekUsage += usage;
-                    }
-                }
-            }
-
-            Log.e("lk_test", "week " + weekDayKey + " usage " + weekUsage + " " + TimeUtils.getTimeHHmm(weekUsage));
-        }
-
-        long averageUsage = totalUsage / totalDay;
+        long averageUsage = TimeUtils.getDailyUsage(calendar, mTaskUsageInfosWeek);
         mTvDailyAverageInfo.setText(getResources().getString(R.string.daily_average_regex,
-                (totalUsage / TimeUtils.ONE_HOUR) + "",
-                ((totalUsage % TimeUtils.ONE_HOUR) / TimeUtils.ONE_MINUTE) + ""));
+                (averageUsage / TimeUtils.ONE_HOUR) + "",
+                ((averageUsage % TimeUtils.ONE_HOUR) / TimeUtils.ONE_MINUTE) + ""));
     }
+
 
     private void updateTaskUsageByDay(Calendar calendar) {
 
-        StringBuilder screenUsageBuilder = new StringBuilder();
+        String screenUsageStr = TimeUtils.getTaskUsageByDayDesc(calendar, mTaskUsageInfosWeek);
 
-        int firstDayOfWeek = calendar.getFirstDayOfWeek();
-        for (int i = 0; i < Calendar.SATURDAY; i++) {
-            Map<Integer, Long> usageDailyByHour = mTaskUsageInfosWeek.get(i);
-            long usageDaily = 0;
-            if (usageDailyByHour != null) {
-                Set<Integer> usageKeys = usageDailyByHour.keySet();
-                for (Integer usageKey : usageKeys) {
-                    Long usageByHour = usageDailyByHour.get(usageKey);
-                    if (usageByHour != null) {
-                        usageDaily += usageByHour;
-                    }
-                }
-            }
-            screenUsageBuilder.append(getUsageDescription(firstDayOfWeek, i, usageDaily));
-            screenUsageBuilder.append("\n");
-        }
-
-        mTvScreenUsageByDay.setText(screenUsageBuilder);
+        mTvScreenUsageByDay.setText(screenUsageStr);
     }
 
-    private String getUsageDescription(int firstDayOfWeek, int index, Long useAge) {
-
-        int currentDayOfWeek = 0;
-
-        if (firstDayOfWeek + index <= Calendar.SATURDAY) {
-            currentDayOfWeek = firstDayOfWeek + index;
-        } else {
-            currentDayOfWeek = firstDayOfWeek + index - Calendar.SATURDAY;
-        }
-
-        switch (currentDayOfWeek) {
-            case Calendar.MONDAY:
-                return "MONDAY        " + getUsageDescription(useAge);
-            case Calendar.TUESDAY:
-                return "TUESDAY       " + getUsageDescription(useAge);
-            case Calendar.WEDNESDAY:
-                return "WEDNESDAY " + getUsageDescription(useAge);
-            case Calendar.THURSDAY:
-                return "THURSDAY    " + getUsageDescription(useAge);
-            case Calendar.FRIDAY:
-                return "FRIDAY           " + getUsageDescription(useAge);
-            case Calendar.SATURDAY:
-                return "SATURDAY     " + getUsageDescription(useAge);
-            case Calendar.SUNDAY:
-                return "SUNDAY         " + getUsageDescription(useAge);
-            default:
-                return "";
-        }
-    }
-
-    private String getUsageDescription(Long usage) {
-        return usage == null ? "" : (getHour(usage) + " : " + getMinute(usage) + " : " + getSeconds(usage));
-    }
-
-    private String getSeconds(long usage) {
-        long minuteMillis = usage % (60 * 60 * 1000);
-        return minuteMillis % (60 * 1000) / 1000 + " S";
-    }
-
-    private String getMinute(long usage) {
-        return usage % (60 * 60 * 1000) / (60 * 1000) + " M";
-    }
-
-    private String getHour(long usage) {
-        return usage / (60 * 60 * 1000) + " H";
-    }
 }
