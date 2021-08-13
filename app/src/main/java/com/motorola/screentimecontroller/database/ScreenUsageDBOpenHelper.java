@@ -13,7 +13,7 @@ import com.motorola.screentimecontroller.database.config.TaskUsageInfoTable;
 public class ScreenUsageDBOpenHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "ScreenUsage.db";
 
     private static final String SQL_CREATE_TASK_USAGE_INFO_ENTRIES =
