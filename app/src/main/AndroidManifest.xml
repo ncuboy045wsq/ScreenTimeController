@@ -22,6 +22,20 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".MotoAppScreenControlBlocker"
+            android:exported="true"
+            android:theme="@style/Theme.Blocker"
+            android:finishOnCloseSystemDialogs="false"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden"
+            >
+
+            <intent-filter android:priority="1000">
+                <action android:name="com.motorola.appscreencontrol.blocker" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
         <activity android:name=".TaskBlockUpInfoActivity" />
         <activity android:name=".TaskUsageInfoActivity" />
         <activity android:name=".TaskWhiteListActivity" />
