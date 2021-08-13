@@ -139,6 +139,7 @@ public class TaskWhiteListActivity extends Activity {
                 }
                 TaskInfo taskInfo = new TaskInfo();
 
+                taskInfo.setAppName(packageInfo.applicationInfo.loadLabel(packageManager).toString());
                 taskInfo.setPackageName(packageInfo.applicationInfo.packageName);
                 taskInfo.setUid(packageInfo.applicationInfo.uid);
                 taskInfo.setIcon(packageInfo.applicationInfo.loadIcon(packageManager));
@@ -202,7 +203,7 @@ public class TaskWhiteListActivity extends Activity {
             Button btAddToWhiteList = convertView.findViewById(R.id.bt_addToWhiteList);
             TextView tvPacakgeName = convertView.findViewById(R.id.tv_pacakgeName);
 
-            tvPacakgeName.setText(taskInfo.getPackageName());
+            tvPacakgeName.setText(taskInfo.getAppName());
 
             btAddToWhiteList.setText(R.string.remove_always_allow);
             btAddToWhiteList.setOnClickListener(new View.OnClickListener() {
@@ -271,7 +272,7 @@ public class TaskWhiteListActivity extends Activity {
             Button btAddToWhiteList = convertView.findViewById(R.id.bt_addToWhiteList);
             TextView tvPacakgeName = convertView.findViewById(R.id.tv_pacakgeName);
 
-            tvPacakgeName.setText(taskInfo.getPackageName());
+            tvPacakgeName.setText(taskInfo.getAppName());
 
             btAddToWhiteList.setText(R.string.add_always_allow);
             btAddToWhiteList.setOnClickListener(new View.OnClickListener() {

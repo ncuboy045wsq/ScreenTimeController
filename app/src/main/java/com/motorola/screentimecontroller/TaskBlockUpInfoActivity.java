@@ -87,6 +87,7 @@ public class TaskBlockUpInfoActivity extends Activity {
                     Log.e("lk_test", getClass().getSimpleName() + ".call 222 " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                 }
                 TaskInfo taskInfo = new TaskInfo();
+                taskInfo.setAppName(packageInfo.applicationInfo.loadLabel(mPackageManager).toString());
                 taskInfo.setPackageName(packageInfo.applicationInfo.packageName);
                 taskInfo.setUid(packageInfo.applicationInfo.uid);
                 taskInfo.setIcon(packageInfo.applicationInfo.loadIcon(mPackageManager));
@@ -238,7 +239,7 @@ public class TaskBlockUpInfoActivity extends Activity {
             TextView tvAppLimit = convertView.findViewById(R.id.tv_appLimit);
 
             ivIcon.setImageDrawable(taskInfo.getIcon());
-            tvPackageName.setText(taskInfo.getPackageName());
+            tvPackageName.setText(taskInfo.getAppName());
             if (taskInfo.getMaxUsage() > 0) {
                 tvAppLimit.setText(TimeUtil.getTimeFormat(taskInfo.getMaxUsage()));
             } else {

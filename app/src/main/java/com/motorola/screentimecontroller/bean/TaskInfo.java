@@ -6,6 +6,7 @@ public class TaskInfo {
     private boolean isServer;
     private int blockType;
     private String packageName;
+    private String appName;
     private Integer uid;
     private Drawable icon;
     private long maxUsage;
@@ -32,6 +33,14 @@ public class TaskInfo {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public Integer getUid() {
