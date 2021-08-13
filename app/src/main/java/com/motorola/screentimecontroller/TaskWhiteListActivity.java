@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.motorola.screentimecontroller.bean.ErrorCode;
 import com.motorola.screentimecontroller.bean.TaskInfo;
@@ -131,7 +132,8 @@ public class TaskWhiteListActivity extends Activity {
 
                 PackageInfo packageInfo = packageInfos.get(i);
                 if (packageInfo == null || packageInfo.applicationInfo == null
-                        || SystemUtils.isSystemApp(packageInfo.applicationInfo)) {
+                        || SystemUtils.isSystemApp(packageInfo.applicationInfo)
+                        || "com.motorola.screentimecontroller".equals(packageInfo.packageName)) {
                     Log.e("lk_test", getClass().getSimpleName() + ".call skip " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                     continue;
                 } else {

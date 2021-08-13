@@ -7,10 +7,11 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.motorola.screentimecontroller.database.ScreenUsageDBOpenHelper;
 import com.motorola.screentimecontroller.database.config.TaskUsageInfoTable;

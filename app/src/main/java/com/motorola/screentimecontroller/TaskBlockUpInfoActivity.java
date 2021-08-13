@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.motorola.screentimecontroller.bean.ErrorCode;
 import com.motorola.screentimecontroller.bean.TaskInfo;
@@ -80,7 +81,8 @@ public class TaskBlockUpInfoActivity extends Activity {
             List<TaskInfo> installPackages = new ArrayList<>();
             for (int i = 0; packageInfos != null && i < packageInfos.size(); i++) {
                 PackageInfo packageInfo = packageInfos.get(i);
-                if (SystemUtils.isSystemApp(packageInfo.applicationInfo)) {
+                if (SystemUtils.isSystemApp(packageInfo.applicationInfo)
+                        || "com.motorola.screentimecontroller".equals(packageInfo.packageName)) {
                     Log.e("lk_test", getClass().getSimpleName() + ".call 111 " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                     continue;
                 } else {
@@ -173,6 +175,9 @@ public class TaskBlockUpInfoActivity extends Activity {
 
                     if (result > 0) {
                         Toast.makeText(TaskBlockUpInfoActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                        taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
+                        mAvailableTaskAdapter.notifyDataSetChanged();
+
                     } else if (result == ErrorCode.DATA_CONFLICT) {
                         Toast.makeText(TaskBlockUpInfoActivity.this, "设置失败: 存在重复的设置", Toast.LENGTH_SHORT).show();
                     } else {

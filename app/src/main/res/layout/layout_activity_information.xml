@@ -26,7 +26,7 @@
             android:text="@string/every_day" />
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_activityInformation"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

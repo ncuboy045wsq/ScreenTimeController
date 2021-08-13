@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.motorola.screentimecontroller">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
-<!--    android:testOnly="false"-->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenTimeController">
+        <activity android:name=".BlockUpTimeListActivity"></activity>
 
         <uses-library
             android:name="moto-core_services"
@@ -21,31 +23,29 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MotoAppScreenControlBlocker"
-            android:exported="true"
-            android:theme="@style/Theme.Blocker"
-            android:finishOnCloseSystemDialogs="false"
+        <activity
+            android:name=".MotoAppScreenControlBlocker"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden"
-            >
-
+            android:exported="true"
+            android:finishOnCloseSystemDialogs="false"
+            android:theme="@style/Theme.Blocker">
             <intent-filter android:priority="1000">
                 <action android:name="com.motorola.appscreencontrol.blocker" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
-
         <activity android:name=".TaskBlockUpInfoActivity" />
         <activity android:name=".TaskUsageInfoActivity" />
         <activity android:name=".TaskWhiteListActivity" />
         <activity android:name=".BlockUpTimeSettingActivity" />
 
         <service
-            android:name="com.motorola.screentimecontroller.ScreenTimeControllerService"
+            android:name=".ScreenTimeControllerService"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="true"
@@ -58,7 +58,6 @@
         <provider
             android:name=".provider.ScreenUsageProvider"
             android:authorities="com.motorola.screenusagecontroller" />
-
     </application>
 
 </manifest>

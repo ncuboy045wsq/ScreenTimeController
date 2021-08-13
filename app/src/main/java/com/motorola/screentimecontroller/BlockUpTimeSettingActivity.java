@@ -6,11 +6,12 @@ import android.app.TimePickerDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.motorola.screentimecontroller.bean.TaskInfo;
 

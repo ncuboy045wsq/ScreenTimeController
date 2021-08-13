@@ -4,8 +4,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.telecom.Call;
+
+import androidx.annotation.NonNull;
 
 import com.motorola.screentimecontroller.database.dao.TaskUsageInfoDao;
 import com.motorola.screentimecontroller.utils.TimeUtils;
