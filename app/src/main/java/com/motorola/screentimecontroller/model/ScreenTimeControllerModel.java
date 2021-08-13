@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.telecom.Call;
 
 import com.motorola.screentimecontroller.database.dao.TaskUsageInfoDao;
 import com.motorola.screentimecontroller.utils.TimeUtils;
@@ -13,6 +14,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -41,7 +43,7 @@ public class ScreenTimeControllerModel {
         }
     }
 
-    public interface OnResult<T> {
+    public interface OnResult {
         public void onResult(Object obj);
     }
 
@@ -95,18 +97,24 @@ public class ScreenTimeControllerModel {
         }, null));
     }
 
+    public void queryTaskUsageInfo(OnResult onResult, long startTime, long endTime) {
+        queryTaskUsageInfo(onResult, Calendar.getInstance().getFirstDayOfWeek(), startTime, endTime);
+    }
+
     /**
-     *
-     * @param onResult  结果回调, 将会获取到 Map<Integer, Map<Integer, Long>>
-     * @param calendar  日期设置
-     * @param startTime 起始时间
-     * @param endTime   结束时间
-     *
+     * @param onResult       结果回调, 将会获取到 Map<Integer, Map<Integer, Long>>
+     * @param firstDayOfWeek 日期设置
+     * @param startTime      起始时间
+     * @param endTime        结束时间
      */
-    public void queryTaskUsageInfo(OnResult onResult, Calendar calendar, long startTime, long endTime) {
+    public void queryTaskUsageInfo(OnResult onResult, int firstDayOfWeek, long startTime, long endTime) {
         this.mExecutor.execute(new FutureTask<TaskUsageInfo>(new Runnable() {
             @Override
             public void run() {
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setFirstDayOfWeek(firstDayOfWeek);
+
                 if (calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek() > 0) {
                     calendar.add(Calendar.DAY_OF_MONTH, -(calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek()));
                 } else {
@@ -210,7 +218,6 @@ public class ScreenTimeControllerModel {
     }
 
     /**
-     *
      * @param onResult
      */
     public void queryTaskUsageInfoByDaily(OnResult onResult) {
@@ -238,6 +245,16 @@ public class ScreenTimeControllerModel {
                 sendMessage(ON_DELETE, new Result(onResult, ScreenTimeControllerModel.this.mTaskUsageInfoDao.delete(taskUsageInfo)));
             }
         }, null));
+    }
+
+    public void queryTaskUsageInfoUpdateTime(OnResult onResult) {
+        this.mExecutor.execute(new FutureTask<Long>(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                sendMessage(ON_DELETE, new Result(onResult, ScreenTimeControllerModel.this.mTaskUsageInfoDao.queryTaskUsageInfoUpdateTime()));
+                return 1l;
+            }
+        }));
     }
 
 }

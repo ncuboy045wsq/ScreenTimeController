@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.motorola.screentimecontroller.model.ScreenTimeControllerModel;
+import com.motorola.screentimecontroller.utils.TaskUsageUtil;
 import com.motorola.screentimecontroller.utils.TimeUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +32,27 @@ public class MainActivity extends Activity {
      * 显示每天使用时长
      */
     private TextView mTvScreenUsageByDay;
+    /**
+     * 本周使用时长环比上周增长标题
+     */
+    private TextView mTvTaskUsageIncreasementLabel;
+    /**
+     * 本周使用时长环比上周增长
+     */
+    private TextView mTvTaskUsageIncreasement;
+    /**
+     * 最后更新时间
+     */
+    private TextView mTvUpdateTime;
 
     /**
      * 本周任务使用时长
      */
     private Map<Integer, Map<Integer, Long>> mTaskUsageInfosWeek;
+    /**
+     * 上周任务使用时长
+     */
+    private Map<Integer, Map<Integer, Long>> mTaskUsageInfosLastWeek;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,21 +65,19 @@ public class MainActivity extends Activity {
 
         mTvScreenUsageByDay = findViewById(R.id.tv_screenUsageByDay);
 
-        TextView tvFloatValueChangeLabel = findViewById(R.id.tv_floatValueChangeLabel);
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher_background);
-        drawable.setBounds(0, 0, 15, 15);
-        tvFloatValueChangeLabel.setCompoundDrawables(drawable, null, null, null);
-
         mTvDailyAverageInfo = findViewById(R.id.tv_dailyAverageInfo);
+        mTvTaskUsageIncreasementLabel = findViewById(R.id.tv_taskUsageIncreasementLabel);
+        mTvTaskUsageIncreasement = findViewById(R.id.tv_taskUsageIncreasement);
+        mTvUpdateTime = findViewById(R.id.tv_updateTime);
 
-        LinearLayout llViewAllActivities = findViewById(R.id.ll_viewAllActivities);
-        llViewAllActivities.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TaskUsageInfoActivity.class);
-                startActivity(intent);
-            }
-        });
+        findViewById(R.id.bt_viewAllActivities)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, TaskUsageInfoActivity.class);
+                        startActivity(intent);
+                    }
+                });
 
         Button btStopTime = findViewById(R.id.bt_stopTime);
         btStopTime.setOnClickListener(new View.OnClickListener() {
@@ -123,10 +139,52 @@ public class MainActivity extends Activity {
                     mTaskUsageInfosWeek = new HashMap<>();
                 }
 
-                updateTaskUsageByDay(calendar);
                 updateDailyAverage(calendar);
+                updateTaskUsageByDay(calendar);
+                updateTaskUsageIncreasement();
             }
-        }, calendar, firstMillisOfWeek, lastMillisOfWeek);
+        }, firstMillisOfWeek, lastMillisOfWeek);
+
+        mScreenTimeControllerModel.queryTaskUsageInfo(new ScreenTimeControllerModel.OnResult() {
+            @Override
+            public void onResult(Object obj) {
+                if (obj != null) {
+                    mTaskUsageInfosLastWeek = (Map<Integer, Map<Integer, Long>>) obj;
+                } else {
+                    mTaskUsageInfosLastWeek = new HashMap<>();
+                }
+                updateTaskUsageIncreasement();
+            }
+        }, firstMillisOfWeek - 7 * TimeUtils.ONE_DAY, firstMillisOfWeek);
+
+        mScreenTimeControllerModel.queryTaskUsageInfoUpdateTime(new ScreenTimeControllerModel.OnResult() {
+            @Override
+            public void onResult(Object obj) {
+                if (obj instanceof Long) {
+                    Long updateTime = (Long) obj;
+                    mTvUpdateTime.setText(getString(R.string.update_time_regex, new Date(updateTime).toLocaleString()));
+                }
+            }
+        });
+    }
+
+    private void updateTaskUsageIncreasement() {
+
+        if (mTaskUsageInfosWeek == null || mTaskUsageInfosLastWeek == null) {
+            return;
+        }
+
+        long totalUsageWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosWeek);
+        long totalUsageLastWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosLastWeek);
+        Log.e("lk_test", getClass().getSimpleName() + ".updateTaskUsageIncreasement totalUsageWeek " + totalUsageWeek + " totalUsageLastWeek " + totalUsageLastWeek);
+        if (totalUsageLastWeek == 0) {
+            mTvTaskUsageIncreasement.setVisibility(View.GONE);
+            mTvTaskUsageIncreasementLabel.setVisibility(View.GONE);
+        } else {
+            mTvTaskUsageIncreasement.setVisibility(View.VISIBLE);
+            mTvTaskUsageIncreasementLabel.setVisibility(View.VISIBLE);
+            mTvTaskUsageIncreasement.setText(TaskUsageUtil.getWeekInscreaseFormat(totalUsageWeek, totalUsageLastWeek));
+        }
     }
 
     private void updateDailyAverage(Calendar calendar) {
@@ -143,32 +201,36 @@ public class MainActivity extends Activity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        for (int i = 0; i < Calendar.SATURDAY; i++) {
-            Set<Integer> weekDayKeys = mTaskUsageInfosWeek.keySet();
-            for (Integer weekDayKey : weekDayKeys) {
-                Map<Integer, Long> usageByHour = mTaskUsageInfosWeek.get(weekDayKey);
-                if (usageByHour != null) {
-                    Set<Integer> usageByHourKeys = usageByHour.keySet();
-                    for (Integer usageByHourKey : usageByHourKeys) {
-                        Long usage = usageByHour.get(usageByHourKey);
-                        if (usage != null) {
-                            totalUsage += usage;
-                        }
+        Set<Integer> weekDayKeys = mTaskUsageInfosWeek.keySet();
+        long weekUsage = 0;
+        for (Integer weekDayKey : weekDayKeys) {
+            Map<Integer, Long> usageByHour = mTaskUsageInfosWeek.get(weekDayKey);
+            if (usageByHour != null) {
+                Set<Integer> usageByHourKeys = usageByHour.keySet();
+                for (Integer usageByHourKey : usageByHourKeys) {
+                    Long usage = usageByHour.get(usageByHourKey);
+                    if (usage != null) {
+                        totalUsage += usage;
+                        weekUsage += usage;
                     }
                 }
             }
+
+            Log.e("lk_test", "week " + weekDayKey + " usage " + weekUsage + " " + TimeUtils.getTimeHHmm(weekUsage));
         }
 
+        long averageUsage = totalUsage / totalDay;
         mTvDailyAverageInfo.setText(getResources().getString(R.string.daily_average_regex,
                 (totalUsage / TimeUtils.ONE_HOUR) + "",
                 ((totalUsage % TimeUtils.ONE_HOUR) / TimeUtils.ONE_MINUTE) + ""));
     }
 
     private void updateTaskUsageByDay(Calendar calendar) {
+
         StringBuilder screenUsageBuilder = new StringBuilder();
 
         int firstDayOfWeek = calendar.getFirstDayOfWeek();
-        for (int i = 1; i <= Calendar.SATURDAY; i++) {
+        for (int i = 0; i < Calendar.SATURDAY; i++) {
             Map<Integer, Long> usageDailyByHour = mTaskUsageInfosWeek.get(i);
             long usageDaily = 0;
             if (usageDailyByHour != null) {
@@ -187,43 +249,31 @@ public class MainActivity extends Activity {
         mTvScreenUsageByDay.setText(screenUsageBuilder);
     }
 
-//    private boolean isTimeMatch(long firstMillisOfWeek, long lastMillisOfWeek, TaskUsageInfo taskUsageInfo) {
-//        if (firstMillisOfWeek <= taskUsageInfo.getStartTime() && taskUsageInfo.getStartTime() < lastMillisOfWeek) {
-//            return true;
-//        } else if (firstMillisOfWeek < taskUsageInfo.getEndTime() && taskUsageInfo.getEndTime() <= lastMillisOfWeek) {
-//            return true;
-//        } else if (taskUsageInfo.getStartTime() < firstMillisOfWeek && taskUsageInfo.getEndTime() > lastMillisOfWeek) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-    private String getUsageDescription(int firstDayOfWeek, int i, Long useAge) {
+    private String getUsageDescription(int firstDayOfWeek, int index, Long useAge) {
 
         int currentDayOfWeek = 0;
 
-        if (firstDayOfWeek + i <= Calendar.SATURDAY) {
-            currentDayOfWeek = firstDayOfWeek + i;
+        if (firstDayOfWeek + index <= Calendar.SATURDAY) {
+            currentDayOfWeek = firstDayOfWeek + index;
         } else {
-            currentDayOfWeek = firstDayOfWeek + i - Calendar.SATURDAY;
+            currentDayOfWeek = firstDayOfWeek + index - Calendar.SATURDAY;
         }
 
         switch (currentDayOfWeek) {
             case Calendar.MONDAY:
-                return "Monday " + getUsageDescription(useAge);
+                return "MONDAY        " + getUsageDescription(useAge);
             case Calendar.TUESDAY:
-                return "TUESDAY " + getUsageDescription(useAge);
+                return "TUESDAY       " + getUsageDescription(useAge);
             case Calendar.WEDNESDAY:
                 return "WEDNESDAY " + getUsageDescription(useAge);
             case Calendar.THURSDAY:
-                return "THURSDAY " + getUsageDescription(useAge);
+                return "THURSDAY    " + getUsageDescription(useAge);
             case Calendar.FRIDAY:
-                return "FRIDAY " + getUsageDescription(useAge);
+                return "FRIDAY           " + getUsageDescription(useAge);
             case Calendar.SATURDAY:
-                return "SATURDAY " + getUsageDescription(useAge);
+                return "SATURDAY     " + getUsageDescription(useAge);
             case Calendar.SUNDAY:
-                return "SUNDAY " + getUsageDescription(useAge);
+                return "SUNDAY         " + getUsageDescription(useAge);
             default:
                 return "";
         }
@@ -235,7 +285,7 @@ public class MainActivity extends Activity {
 
     private String getSeconds(long usage) {
         long minuteMillis = usage % (60 * 60 * 1000);
-        return minuteMillis % (60 * 1000) + " S";
+        return minuteMillis % (60 * 1000) / 1000 + " S";
     }
 
     private String getMinute(long usage) {

@@ -48,16 +48,15 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_floatValueChangeLabel"
+                        android:id="@+id/tv_taskUsageIncreasementLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_launcher_background"
                         android:text="@string/float_value_change_from_last_week" />
 
                     <TextView
+                        android:id="@+id/tv_taskUsageIncreasement"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10%" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <TextView
@@ -77,27 +76,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/ll_viewAllActivities"
+            <Button
+                android:id="@+id/bt_viewAllActivities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"
-                    android:text="@string/view_all_activities" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="right"
-                    android:layout_weight="0"
-                    android:src="@drawable/ic_launcher_background" />
-
-            </LinearLayout>
+                android:orientation="horizontal"
+                android:text="@string/view_all_activities" />
 
             <TextView
                 android:id="@+id/tv_updateTime"
@@ -113,16 +97,17 @@
                 android:text="@string/stop_time" />
 
             <Button
+                android:id="@+id/bt_alwayAllows"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/always_allow" />
+
+            <Button
                 android:id="@+id/bt_appTimeLimit"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="@string/application_time_limit" />
 
-            <Button
-                android:id="@+id/bt_alwayAllows"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="@string/always_allow" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -3,11 +3,20 @@ package com.motorola.screentimecontroller.bean;
 import android.graphics.drawable.Drawable;
 
 public class TaskInfo {
+    private boolean isServer;
     private int blockType;
     private String packageName;
     private Integer uid;
     private Drawable icon;
-    private Long maxUsage;
+    private long maxUsage;
+
+    public boolean isServer() {
+        return isServer;
+    }
+
+    public void setServer(boolean server) {
+        isServer = server;
+    }
 
     public int getBlockType() {
         return blockType;
@@ -41,11 +50,11 @@ public class TaskInfo {
         this.icon = icon;
     }
 
-    public Long getMaxUsage() {
+    public long getMaxUsage() {
         return maxUsage;
     }
 
-    public void setMaxUsage(Long maxUsage) {
+    public void setMaxUsage(long maxUsage) {
         this.maxUsage = maxUsage;
     }
 }

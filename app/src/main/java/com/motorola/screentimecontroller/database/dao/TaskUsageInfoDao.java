@@ -125,4 +125,14 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
 
         return mContentResolver.update(mUri, getInsertContentValues(taskUsageInfo), where, selectionArgs);
     }
+
+    public long queryTaskUsageInfoUpdateTime() {
+        Cursor cursor = mContentResolver.query(mUri, new String[]{TaskUsageInfoTable.END_TIME},
+                null, null, TaskUsageInfoTable.END_TIME + " ASC ");
+        if (cursor == null || !cursor.moveToNext()) {
+            return 0;
+        }
+
+        return cursor.getLong(cursor.getColumnIndex(TaskUsageInfoTable.END_TIME));
+    }
 }

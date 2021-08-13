@@ -19,7 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.motorola.screentimecontroller.bean.ErrorCode;
 import com.motorola.screentimecontroller.bean.TaskInfo;
+import com.motorola.screentimecontroller.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,9 +50,7 @@ public class TaskWhiteListActivity extends Activity {
             if (msg.obj != null) {
                 Map<Integer, List<TaskInfo>> taskInfos = (Map<Integer, List<TaskInfo>>) msg.obj;
                 mWhiteListAdapter.setData(taskInfos.get(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW));
-                mWhiteListAdapter.notifyDataSetChanged();
                 mTaskListAdapter.setData(taskInfos.get(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_USAGE));
-                mTaskListAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -65,11 +65,11 @@ public class TaskWhiteListActivity extends Activity {
         ListView lvWhiteList = findViewById(R.id.lv_whiteList);
         ListView lvTaskList = findViewById(R.id.lv_taskList);
 
-        lvWhiteList.setAdapter(mWhiteListAdapter);
-        lvTaskList.setAdapter(mTaskListAdapter);
-
         mWhiteListAdapter = new WhiteListAdapter();
         mTaskListAdapter = new TaskListAdapter();
+
+        lvWhiteList.setAdapter(mWhiteListAdapter);
+        lvTaskList.setAdapter(mTaskListAdapter);
 
         mExecutor.execute(new FutureTask<Map<Integer, List<TaskInfo>>>(new MyCaller()) {
             @Override
@@ -84,8 +84,6 @@ public class TaskWhiteListActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                Log.e("lk_test", TaskWhiteListActivity.this.getClass().getSimpleName() + ".done 111 " + msg.obj);
 
                 msg.sendToTarget();
             }
@@ -107,8 +105,10 @@ public class TaskWhiteListActivity extends Activity {
             List<Bundle> taskBlockUpInfoBundles = null;
             try {
                 taskBlockUpInfoBundles = MotoExtendManager.getInstance(TaskWhiteListActivity.this).getTaskBlockUpInfo();
+                Log.e("lk_test", getClass().getSimpleName() + ".call:: v2 " + taskBlockUpInfoBundles.size());
+
             } catch (Exception e) {
-                Log.e("lk_test", getClass().getSimpleName() + ".call:: v2 " + e.getMessage());
+                Log.e("lk_test", getClass().getSimpleName() + ".call:: v3 " + e.getMessage());
                 return new HashMap<>();
             }
 
@@ -127,9 +127,16 @@ public class TaskWhiteListActivity extends Activity {
             installPackages.put(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW, alwaysAllowTaskBlockUpInfos);
 
             for (int i = 0; packageInfos != null && i < packageInfos.size(); i++) {
-                Log.e("lk_test", getClass().getSimpleName() + ".call return packageInfos[" + i + "] " + packageInfos.get(i));
+//                Log.e("lk_test", getClass().getSimpleName() + ".call return packageInfos[" + i + "] " + packageInfos.get(i));
 
                 PackageInfo packageInfo = packageInfos.get(i);
+                if (packageInfo == null || packageInfo.applicationInfo == null
+                        || SystemUtils.isSystemApp(packageInfo.applicationInfo)) {
+                    Log.e("lk_test", getClass().getSimpleName() + ".call skip " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
+                    continue;
+                } else {
+                    Log.e("lk_test", getClass().getSimpleName() + ".call not skip " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
+                }
                 TaskInfo taskInfo = new TaskInfo();
 
                 taskInfo.setPackageName(packageInfo.applicationInfo.packageName);
@@ -137,20 +144,22 @@ public class TaskWhiteListActivity extends Activity {
                 taskInfo.setIcon(packageInfo.applicationInfo.loadIcon(packageManager));
 
                 for (TaskBlockUpInfo taskBlockUpInfo : taskBlockUpInfos) {
+                    Log.e("lk_test", getClass().getSimpleName() + ".call rules " + taskBlockUpInfo.getPackageName() + " " + taskBlockUpInfo.getMaxUsage() + " " + taskBlockUpInfo.getBlockType() + " uid " + taskBlockUpInfo.getUid() + " " + (taskBlockUpInfo.getPackageName().equals(taskInfo.getPackageName())) + " " + (taskBlockUpInfo.getUid() == taskInfo.getUid()));
                     if (taskBlockUpInfo.getPackageName() != null && taskBlockUpInfo.getPackageName().equals(taskInfo.getPackageName())
-                            && taskBlockUpInfo.getUid() != null && taskBlockUpInfo.getUid().equals(taskInfo.getUid())) {
+                            && taskBlockUpInfo.getUid() != null && +taskBlockUpInfo.getUid() == taskInfo.getUid()) {
+                        Log.e("lk_test", getClass().getSimpleName() + ".call rules 111 " + taskBlockUpInfo.getPackageName() + " " + taskBlockUpInfo.getMaxUsage() + " " + taskBlockUpInfo.getBlockType() + " uid " + taskBlockUpInfo.getUid());
+                        taskInfo.setServer(true);
                         taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
                         taskInfo.setBlockType(taskBlockUpInfo.getBlockType());
                         break;
                     }
                 }
                 if (taskInfo.getBlockType() == TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW) {
-                    maxUsageTaskBlockUpInfos.add(taskInfo);
-                } else {
                     alwaysAllowTaskBlockUpInfos.add(taskInfo);
+                } else {
+                    maxUsageTaskBlockUpInfos.add(taskInfo);
                 }
             }
-            Log.e("lk_test", getClass().getSimpleName() + ".call return v1 " + installPackages);
             return installPackages;
         }
     }
@@ -161,7 +170,8 @@ public class TaskWhiteListActivity extends Activity {
 
         public void setData(List<TaskInfo> taskInfoList) {
             this.mWhiteList = taskInfoList;
-            Toast.makeText(TaskWhiteListActivity.this, getClass().getSimpleName() + ".setData " + (this.mWhiteList == null ? "null" : this.mWhiteList.size()), Toast.LENGTH_SHORT).show();
+            notifyDataSetChanged();
+            Log.e("lk_test", getClass().getSimpleName() + ".setData " + (this.mWhiteList == null ? "null" : this.mWhiteList.size()));
         }
 
         @Override
@@ -181,6 +191,7 @@ public class TaskWhiteListActivity extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.e("lk_test", getClass().getSimpleName() + ".getView return run...");
 
             if (convertView == null) {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_task_white_list_item, parent, false);
@@ -200,7 +211,7 @@ public class TaskWhiteListActivity extends Activity {
                     TaskInfo taskInfo = mWhiteList.get(position);
                     TaskBlockUpInfo taskBlockUpInfo = new TaskBlockUpInfo();
                     taskBlockUpInfo.setPackageName(taskInfo.getPackageName());
-                    taskBlockUpInfo.setUserId(taskInfo.getUid());
+                    taskBlockUpInfo.setUid(taskInfo.getUid());
                     taskBlockUpInfo.setMaxUsage(taskInfo.getMaxUsage());
                     if (taskBlockUpInfo.getMaxUsage() > 0) {
                         taskBlockUpInfo.setBlockType(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_USAGE);
@@ -211,7 +222,12 @@ public class TaskWhiteListActivity extends Activity {
                     long updateCount = MotoExtendManager.getInstance(getApplicationContext()).updateTaskBlockUpInfo(taskBlockUpInfo);
 
                     if (updateCount > 0) {
-                        mWhiteList.remove(taskInfo);
+                        if (mWhiteList.remove(taskInfo)) {
+                            Toast.makeText(TaskWhiteListActivity.this, "remove success 111 " + position, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(TaskWhiteListActivity.this, "remove failed 111 " + position, Toast.LENGTH_SHORT).show();
+                        }
+
                         notifyDataSetChanged();
                         mTaskListAdapter.mTaskInfoList.add(0, taskInfo);
                         mTaskListAdapter.notifyDataSetChanged();
@@ -231,7 +247,7 @@ public class TaskWhiteListActivity extends Activity {
 
         @Override
         public int getCount() {
-            return mTaskInfoList.size();
+            return mTaskInfoList == null ? 0 : mTaskInfoList.size();
         }
 
         @Override
@@ -265,22 +281,35 @@ public class TaskWhiteListActivity extends Activity {
                     TaskInfo taskInfo = mTaskInfoList.get(position);
                     TaskBlockUpInfo taskBlockUpInfo = new TaskBlockUpInfo();
                     taskBlockUpInfo.setPackageName(taskInfo.getPackageName());
-                    taskBlockUpInfo.setUserId(taskInfo.getUid());
+                    taskBlockUpInfo.setUid(taskInfo.getUid());
                     taskBlockUpInfo.setMaxUsage(taskInfo.getMaxUsage());
-                    if (taskBlockUpInfo.getMaxUsage() > 0) {
-                        taskBlockUpInfo.setBlockType(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_USAGE);
-                    } else {
-                        taskBlockUpInfo.setBlockType(0);
-                    }
+                    taskBlockUpInfo.setBlockType(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW);
 
-                    long updateCount = MotoExtendManager.getInstance(getApplicationContext()).addTaskBlockUpInfo(taskBlockUpInfo);
+
+                    long updateCount = 0;
+                    try {
+                        if (taskInfo.isServer()) {
+                            Log.e("lk_test", getClass().getSimpleName() + ".getView update taskblockupinfo");
+                            updateCount = MotoExtendManager.getInstance(getApplicationContext()).updateTaskBlockUpInfo(taskBlockUpInfo);
+                        } else {
+                            Log.e("lk_test", getClass().getSimpleName() + ".getView add taskblockupinfo");
+                            updateCount = MotoExtendManager.getInstance(getApplicationContext()).addTaskBlockUpInfo(taskBlockUpInfo);
+                        }
+                    } catch (Exception e) {
+                    }
                     if (updateCount > 0) {
-                        mTaskInfoList.remove(mTaskInfoList);
+                        if (mTaskInfoList.remove(taskInfo)) {
+                            Toast.makeText(TaskWhiteListActivity.this, "Remove task success " + updateCount, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(TaskWhiteListActivity.this, "Remove task failed " + updateCount, Toast.LENGTH_SHORT).show();
+                        }
                         notifyDataSetChanged();
                         mWhiteListAdapter.mWhiteList.add(0, taskInfo);
                         mWhiteListAdapter.notifyDataSetChanged();
+                    } else if (updateCount == ErrorCode.DATA_CONFLICT) {
+                        Toast.makeText(TaskWhiteListActivity.this, "添加白名单失败: 重复设置了.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(TaskWhiteListActivity.this, "添加白名单失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TaskWhiteListActivity.this, "添加白名单失败 " + updateCount, Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -291,7 +320,8 @@ public class TaskWhiteListActivity extends Activity {
 
         public void setData(List<TaskInfo> taskInfos) {
             this.mTaskInfoList = taskInfos;
-            Toast.makeText(TaskWhiteListActivity.this, getClass().getSimpleName() + ".setData " + (this.mTaskInfoList == null ? "null" : this.mTaskInfoList.size()), Toast.LENGTH_SHORT).show();
+            notifyDataSetChanged();
+            Log.e("lk_test", getClass().getSimpleName() + ".setData " + (this.mTaskInfoList == null ? "null" : this.mTaskInfoList.size()));
         }
     }
 

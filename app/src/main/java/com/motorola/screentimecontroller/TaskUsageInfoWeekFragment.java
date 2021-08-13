@@ -10,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.motorola.screentimecontroller.model.ScreenTimeControllerModel;
+import com.motorola.screentimecontroller.utils.TaskUsageUtil;
 import com.motorola.screentimecontroller.utils.TimeUtils;
 
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Set;
-
-import motorola.core_services.screentimecontroller.bean.ScreenBlockUpTime;
 
 public class TaskUsageInfoWeekFragment extends Fragment {
 
@@ -73,16 +71,15 @@ public class TaskUsageInfoWeekFragment extends Fragment {
                 mTaskUsageInfosWeek = (Map<Integer, Map<Integer, Long>>) obj;
                 updateUsageInfo();
             }
-        }, calendar, calendar.getTimeInMillis(), calendar.getTimeInMillis() + 7 * TimeUtils.ONE_DAY);
+        }, calendar.getTimeInMillis(), calendar.getTimeInMillis() + 7 * TimeUtils.ONE_DAY);
 
-        calendar.add(Calendar.MILLISECOND, (int) (-7 * TimeUtils.ONE_DAY));
         mScreenTimeControllerModel.queryTaskUsageInfo(new ScreenTimeControllerModel.OnResult() {
             @Override
             public void onResult(Object obj) {
                 mTaskUsageInfosLastWeek = (Map<Integer, Map<Integer, Long>>) obj;
                 updateUsageInfo();
             }
-        }, calendar, calendar.getTimeInMillis(), calendar.getTimeInMillis() + 7 * TimeUtils.ONE_DAY);
+        }, calendar.getTimeInMillis() - 7 * TimeUtils.ONE_DAY, calendar.getTimeInMillis());
     }
 
     private void updateUsageInfo() {
@@ -91,45 +88,15 @@ public class TaskUsageInfoWeekFragment extends Fragment {
             return;
         }
 
-        long totalUsageWeek = getTotalUsage(mTaskUsageInfosWeek);
-        long totalUsageLastWeek = getTotalUsage(mTaskUsageInfosLastWeek);
+        long totalUsageWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosWeek);
+        long totalUsageLastWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosLastWeek);
 
         if (totalUsageLastWeek == 0) {
             mTvCompareWithLastWeek.setVisibility(View.VISIBLE);
         } else {
-            mTvCompareWithLastWeek.setText(getWeekInscrease(totalUsageWeek, totalUsageLastWeek));
+            mTvCompareWithLastWeek.setText(TaskUsageUtil.getWeekInscreaseFormat(totalUsageWeek, totalUsageLastWeek) + "");
         }
     }
 
-    private String getWeekInscrease(long week, long lastWeek) {
-        return (week - lastWeek) / lastWeek + "";
-    }
 
-    private long getTotalUsage(Map<Integer, Map<Integer, Long>> weekUsageInfo) {
-
-        long totalUsage = 0;
-
-        if (weekUsageInfo == null) {
-            return totalUsage;
-        }
-
-        Set<Integer> weekdayKeys = weekUsageInfo.keySet();
-        for (Integer weekdayKey : weekdayKeys) {
-            Map<Integer, Long> usageInfoByHour = weekUsageInfo.get(weekdayKey);
-            if (usageInfoByHour == null) {
-                continue;
-            }
-            Set<Integer> usageInfoByHourKeys = usageInfoByHour.keySet();
-            for (Integer usageInfoByHourKey : usageInfoByHourKeys) {
-                Long usageByHour = usageInfoByHour.get(usageInfoByHourKey);
-                if (usageByHour == null) {
-                    continue;
-                }
-
-                totalUsage += usageByHour;
-            }
-        }
-
-        return totalUsage;
-    }
 }

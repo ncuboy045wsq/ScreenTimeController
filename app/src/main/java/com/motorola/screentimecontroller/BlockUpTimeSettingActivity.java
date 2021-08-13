@@ -3,14 +3,26 @@ package com.motorola.screentimecontroller;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.motorola.screentimecontroller.bean.TaskInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import motorola.core_services.misc.MotoExtendManager;
 import motorola.core_services.screentimecontroller.bean.ScreenBlockUpTime;
+import motorola.core_services.screentimecontroller.bean.TaskBlockUpInfo;
 
 //import motorola.core_services.screentimecontroller.MotoExtendManager;
 
@@ -54,9 +66,9 @@ public class BlockUpTimeSettingActivity extends Activity {
                     ScreenBlockUpTime screenBlockUpTime = new ScreenBlockUpTime();
                     long endTime = TimePickerFragment.getTimeInMillis(hourOfDay, minute);
                     if (mStartTime > endTime) {
-                        long tmp = mStartTime;
-                        mStartTime = endTime;
-                        endTime = tmp;
+                        mStartTime = 0;
+                        Toast.makeText(BlockUpTimeSettingActivity.this, "起始时间不能小于结束时间", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                     screenBlockUpTime.setStartTime(mStartTime);
                     screenBlockUpTime.setEndTime(endTime);
@@ -66,11 +78,12 @@ public class BlockUpTimeSettingActivity extends Activity {
 
                         if (addCount > 0) {
                             Toast.makeText(BlockUpTimeSettingActivity.this, "Set success " + addCount, Toast.LENGTH_SHORT).show();
+                        } else if (addCount == -1001) {
+                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed: Time is exist.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed " + addCount, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed: unexpected error." + addCount, Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
                         Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
