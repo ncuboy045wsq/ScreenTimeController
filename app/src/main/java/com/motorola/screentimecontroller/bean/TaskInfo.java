@@ -35,7 +35,7 @@ public class TaskInfo {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
-    
+
     public String getAppName() {
         return appName;
     }

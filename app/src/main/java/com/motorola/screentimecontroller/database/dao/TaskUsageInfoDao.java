@@ -76,6 +76,26 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
         return taskUsageInfoList;
     }
 
+    public List<TaskUsageInfo> query(String pkgName, int uid, long startTime, long endTime) {
+
+        List<TaskUsageInfo> taskUsageInfoList = new ArrayList<>();
+
+        String startTimeStr = startTime + "";
+        String endTimeStr = endTime + "";
+
+        String selection = TaskUsageInfoTable.PACKAGE_NAME + "=? AND " + TaskUsageInfoTable.UID + " =? AND (" + TaskUsageInfoTable.START_TIME + ">=? AND " + TaskUsageInfoTable.START_TIME
+                + "<? OR " + TaskUsageInfoTable.END_TIME + ">? AND " + TaskUsageInfoTable.END_TIME + "<=? OR "
+                + TaskUsageInfoTable.START_TIME + " <? AND " + TaskUsageInfoTable.END_TIME + ">?)";
+        String[] selectionArgs = new String[]{pkgName, uid + "", startTimeStr, endTimeStr, startTimeStr, endTimeStr, startTimeStr, endTimeStr};
+        Cursor cursor = mContentResolver.query(mUri, null, selection, selectionArgs, null);
+
+        while (cursor != null && cursor.moveToNext()) {
+            taskUsageInfoList.add(getTaskUsageInfo(cursor));
+        }
+
+        return taskUsageInfoList;
+    }
+
     public List<TaskUsageInfo> query(long startTime, long endTime) {
 
         List<TaskUsageInfo> taskUsageInfoList = new ArrayList<>();

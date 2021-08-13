@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import motorola.core_services.screentimecontroller.TimeUtil;
 import motorola.core_services.screentimecontroller.bean.TaskUsageInfo;
 
 public class ScreenTimeControllerModel {
@@ -100,6 +101,42 @@ public class ScreenTimeControllerModel {
 
     public void queryTaskUsageInfo(OnResult onResult, long startTime, long endTime) {
         queryTaskUsageInfo(onResult, Calendar.getInstance().getFirstDayOfWeek(), startTime, endTime);
+    }
+
+    public void queryTaskUsageInfo(OnResult onResult, String pkgName, int uid) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        long firstMillisOfDay = calendar.getTimeInMillis();
+
+        queryTaskUsageInfo(onResult, pkgName, uid, firstMillisOfDay, firstMillisOfDay + TimeUtils.ONE_DAY);
+    }
+
+    public void queryTaskUsageInfo(OnResult onResult, String pkgName, int uid, long startTime, long endTime) {
+
+        List<TaskUsageInfo> taskUsageInfoList = ScreenTimeControllerModel.this.mTaskUsageInfoDao.query(pkgName, uid, startTime, endTime);
+
+        if (taskUsageInfoList == null) {
+            sendMessage(ON_QUERY_ALL, new Result(onResult, 0));
+            return;
+        }
+
+        long totalTime = 0;
+        for (TaskUsageInfo taskUsageInfo : taskUsageInfoList) {
+            totalTime += taskUsageInfo.getDuration();
+            if (taskUsageInfo.getStartTime() < startTime) {
+                totalTime -= (startTime - taskUsageInfo.getStartTime());
+            }
+            if (taskUsageInfo.getEndTime() > endTime) {
+                totalTime -= (startTime - taskUsageInfo.getEndTime());
+            }
+        }
+
+        sendMessage(ON_QUERY_ALL, new Result(onResult, totalTime));
     }
 
     /**
