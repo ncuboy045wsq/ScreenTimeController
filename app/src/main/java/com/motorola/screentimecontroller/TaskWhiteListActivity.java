@@ -37,6 +37,9 @@ import java.util.concurrent.FutureTask;
 import motorola.core_services.misc.MotoExtendManager;
 import motorola.core_services.screentimecontroller.bean.TaskBlockUpInfo;
 
+/**
+ * 设置应用白名单
+ */
 public class TaskWhiteListActivity extends Activity {
 
     private final ExecutorService mExecutor = Executors.newCachedThreadPool();
@@ -97,19 +100,12 @@ public class TaskWhiteListActivity extends Activity {
 
             PackageManager packageManager = getApplicationContext().getPackageManager();
             List<PackageInfo> packageInfos = null;
-            try {
-                packageInfos = packageManager.getInstalledPackages(0);
-            } catch (Exception e) {
-                Log.e("lk_test", getClass().getSimpleName() + ".call:: v1 " + e.getMessage());
-            }
+            packageInfos = packageManager.getInstalledPackages(0);
 
             List<Bundle> taskBlockUpInfoBundles = null;
             try {
                 taskBlockUpInfoBundles = MotoExtendManager.getInstance(TaskWhiteListActivity.this).getTaskBlockUpInfo();
-                Log.e("lk_test", getClass().getSimpleName() + ".call:: v2 " + taskBlockUpInfoBundles.size());
-
             } catch (Exception e) {
-                Log.e("lk_test", getClass().getSimpleName() + ".call:: v3 " + e.getMessage());
                 return new HashMap<>();
             }
 
@@ -128,16 +124,12 @@ public class TaskWhiteListActivity extends Activity {
             installPackages.put(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW, alwaysAllowTaskBlockUpInfos);
 
             for (int i = 0; packageInfos != null && i < packageInfos.size(); i++) {
-//                Log.e("lk_test", getClass().getSimpleName() + ".call return packageInfos[" + i + "] " + packageInfos.get(i));
 
                 PackageInfo packageInfo = packageInfos.get(i);
                 if (packageInfo == null || packageInfo.applicationInfo == null
                         || SystemUtils.isSystemApp(packageInfo.applicationInfo)
                         || "com.motorola.screentimecontroller".equals(packageInfo.packageName)) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".call skip " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                     continue;
-                } else {
-                    Log.e("lk_test", getClass().getSimpleName() + ".call not skip " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                 }
                 TaskInfo taskInfo = new TaskInfo();
 
@@ -147,10 +139,8 @@ public class TaskWhiteListActivity extends Activity {
                 taskInfo.setIcon(packageInfo.applicationInfo.loadIcon(packageManager));
 
                 for (TaskBlockUpInfo taskBlockUpInfo : taskBlockUpInfos) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".call rules " + taskBlockUpInfo.getPackageName() + " " + taskBlockUpInfo.getMaxUsage() + " " + taskBlockUpInfo.getBlockType() + " uid " + taskBlockUpInfo.getUid() + " " + (taskBlockUpInfo.getPackageName().equals(taskInfo.getPackageName())) + " " + (taskBlockUpInfo.getUid() == taskInfo.getUid()));
                     if (taskBlockUpInfo.getPackageName() != null && taskBlockUpInfo.getPackageName().equals(taskInfo.getPackageName())
                             && taskBlockUpInfo.getUid() != null && +taskBlockUpInfo.getUid() == taskInfo.getUid()) {
-                        Log.e("lk_test", getClass().getSimpleName() + ".call rules 111 " + taskBlockUpInfo.getPackageName() + " " + taskBlockUpInfo.getMaxUsage() + " " + taskBlockUpInfo.getBlockType() + " uid " + taskBlockUpInfo.getUid());
                         taskInfo.setServer(true);
                         taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
                         taskInfo.setBlockType(taskBlockUpInfo.getBlockType());
@@ -174,7 +164,6 @@ public class TaskWhiteListActivity extends Activity {
         public void setData(List<TaskInfo> taskInfoList) {
             this.mWhiteList = taskInfoList;
             notifyDataSetChanged();
-            Log.e("lk_test", getClass().getSimpleName() + ".setData " + (this.mWhiteList == null ? "null" : this.mWhiteList.size()));
         }
 
         @Override
@@ -194,8 +183,6 @@ public class TaskWhiteListActivity extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.e("lk_test", getClass().getSimpleName() + ".getView return run...");
-
             if (convertView == null) {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_task_white_list_item, parent, false);
             }
@@ -292,10 +279,8 @@ public class TaskWhiteListActivity extends Activity {
                     long updateCount = 0;
                     try {
                         if (taskInfo.isServer()) {
-                            Log.e("lk_test", getClass().getSimpleName() + ".getView update taskblockupinfo");
                             updateCount = MotoExtendManager.getInstance(getApplicationContext()).updateTaskBlockUpInfo(taskBlockUpInfo);
                         } else {
-                            Log.e("lk_test", getClass().getSimpleName() + ".getView add taskblockupinfo");
                             updateCount = MotoExtendManager.getInstance(getApplicationContext()).addTaskBlockUpInfo(taskBlockUpInfo);
                         }
                     } catch (Exception e) {
@@ -324,7 +309,6 @@ public class TaskWhiteListActivity extends Activity {
         public void setData(List<TaskInfo> taskInfos) {
             this.mTaskInfoList = taskInfos;
             notifyDataSetChanged();
-            Log.e("lk_test", getClass().getSimpleName() + ".setData " + (this.mTaskInfoList == null ? "null" : this.mTaskInfoList.size()));
         }
     }
 

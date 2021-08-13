@@ -32,6 +32,7 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
         ContentValues contentValues = new ContentValues();
         contentValues.put(TaskUsageInfoTable.PACKAGE_NAME, taskUsageInfo.getPackageName());
         contentValues.put(TaskUsageInfoTable.UID, taskUsageInfo.getUid());
+        // contentValues.put(TaskUsageInfoTable.USER_ID, taskUsageInfo.getUserId());
         contentValues.put(TaskUsageInfoTable.START_TIME, taskUsageInfo.getStartTime());
         contentValues.put(TaskUsageInfoTable.END_TIME, taskUsageInfo.getEndTime());
         return contentValues;
@@ -48,6 +49,7 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
 
         String selection = TaskUsageInfoTable.PACKAGE_NAME + "=? and " + TaskUsageInfoTable.UID + "=?";
         String[] selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUid() + ""};
+//        String[] selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUserId() + ""};
 
         Cursor cursor = mContentResolver.query(mUri, null, selection, selectionArgs, null);
         if (cursor == null || cursor.getCount() <= 0) {
@@ -102,6 +104,7 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
 
         where = TaskUsageInfoTable.PACKAGE_NAME + "=? and " + TaskUsageInfoTable.UID + "=?";
         selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUid() + ""};
+//        selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUserId() + ""};
 
         return mContentResolver.delete(mUri, where, selectionArgs);
     }
@@ -110,6 +113,7 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
         TaskUsageInfo screenUsageInfo = new TaskUsageInfo();
         screenUsageInfo.setPackageName(cursor.getString(cursor.getColumnIndex(TaskUsageInfoTable.PACKAGE_NAME)));
         screenUsageInfo.setUid(cursor.getInt(cursor.getColumnIndex(TaskUsageInfoTable.UID)));
+        // screenUsageInfo.setUserId(cursor.getInt(cursor.getColumnIndex(TaskUsageInfoTable.USER_ID)));
         screenUsageInfo.setStartTime(cursor.getLong(cursor.getColumnIndex(TaskUsageInfoTable.START_TIME)));
         screenUsageInfo.setEndTime(cursor.getLong(cursor.getColumnIndex(TaskUsageInfoTable.END_TIME)));
         return screenUsageInfo;
@@ -122,6 +126,7 @@ public class TaskUsageInfoDao implements BaseDao<TaskUsageInfo> {
 
         where = TaskUsageInfoTable.PACKAGE_NAME + "=? and " + TaskUsageInfoTable.UID + "=?";
         selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUid() + ""};
+//        selectionArgs = new String[]{taskUsageInfo.getPackageName(), taskUsageInfo.getUserId() + ""};
 
         return mContentResolver.update(mUri, getInsertContentValues(taskUsageInfo), where, selectionArgs);
     }

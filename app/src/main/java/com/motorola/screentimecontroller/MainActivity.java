@@ -176,7 +176,6 @@ public class MainActivity extends Activity {
 
         long totalUsageWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosWeek);
         long totalUsageLastWeek = TaskUsageUtil.getTotalUsage(mTaskUsageInfosLastWeek);
-        Log.e("lk_test", getClass().getSimpleName() + ".updateTaskUsageIncreasement totalUsageWeek " + totalUsageWeek + " totalUsageLastWeek " + totalUsageLastWeek);
         if (totalUsageLastWeek == 0) {
             mTvTaskUsageIncreasement.setVisibility(View.GONE);
             mTvTaskUsageIncreasementLabel.setVisibility(View.GONE);

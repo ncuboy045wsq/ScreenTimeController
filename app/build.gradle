@@ -64,5 +64,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     compileOnly files('libs/moto-core_services.jar')
-    compileOnly files('libs/framework.jar')
 }

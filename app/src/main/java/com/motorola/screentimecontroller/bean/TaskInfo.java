@@ -7,6 +7,7 @@ public class TaskInfo {
     private int blockType;
     private String packageName;
     private String appName;
+    private Integer userId;
     private Integer uid;
     private Drawable icon;
     private long maxUsage;
@@ -34,13 +35,21 @@ public class TaskInfo {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
-
+    
     public String getAppName() {
         return appName;
     }
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Integer getUid() {

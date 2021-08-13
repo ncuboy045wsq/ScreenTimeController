@@ -30,7 +30,6 @@ public class ScreenTimeControllerService extends Service {
 
         @Override
         public long onPageFinish(String packageName, String uid, long startTime, long duration) throws RemoteException {
-            Log.e("lk_test", getClass().getSimpleName() + ".onPageFinish: 001v1 packageName " + packageName + " uid " + uid + " startTime " + startTime + " duration " + duration);
             TaskUsageInfo taskUsageInfo = new TaskUsageInfo();
             taskUsageInfo.setPackageName(packageName);
             taskUsageInfo.setUid(Integer.parseInt(uid));
@@ -41,7 +40,7 @@ public class ScreenTimeControllerService extends Service {
             try {
                 uri = mTaskUsageInfoDao.insert(taskUsageInfo);
             } catch (Exception e) {
-                Log.e("lk_test", getClass().getSimpleName() + ".onPageFinish: mTaskUsageInfoDao " + mTaskUsageInfoDao + "  002 " + e.getMessage());
+                e.printStackTrace();
             }
 
             int insertCount = 0;
@@ -49,22 +48,15 @@ public class ScreenTimeControllerService extends Service {
                 try {
                     insertCount = Integer.parseInt(uri.getLastPathSegment());
                 } catch (Exception e) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".onPageFinish: 003 " + e.getMessage());
                     insertCount = 0;
                 }
             }
-
-//            Toast.makeText(ScreenTimeControllerService.this, "Insert " + taskUsageInfo.getInfo() + " count " + insertCount, Toast.LENGTH_SHORT).show();
-
-            Log.e("lk_test", getClass().getSimpleName() + ".onPageFinish: 004 packageName " + packageName + " uid " + uid + " startTime " + startTime + " duration " + duration + " insertCount " + insertCount);
 
             return insertCount;
         }
 
         @Override
         public List<Bundle> getTaskUsageInfo() throws RemoteException {
-
-            Log.e("lk_test", ScreenTimeControllerService.this.getClass().getSimpleName() + ".ScreenTimeControllerService.getTaskUsageInfo:: run...");
 
             // 获取当天所有 task 使用的时长信息
             List<TaskUsageInfo> taskUsageInfoList = mTaskUsageInfoDao.query();
@@ -85,13 +77,11 @@ public class ScreenTimeControllerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("lk_test", getClass().getSimpleName() + ".onCreate run");
         mTaskUsageInfoDao = new TaskUsageInfoDao(getContentResolver());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("lk_test", getClass().getSimpleName() + ".onStartCommand run");
         return super.onStartCommand(intent, flags, startId);
     }
 

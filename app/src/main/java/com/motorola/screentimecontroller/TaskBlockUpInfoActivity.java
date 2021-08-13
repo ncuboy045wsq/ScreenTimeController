@@ -40,6 +40,9 @@ import motorola.core_services.misc.MotoExtendManager;
 import motorola.core_services.screentimecontroller.TimeUtil;
 import motorola.core_services.screentimecontroller.bean.TaskBlockUpInfo;
 
+/**
+ * 设置应用最大使用时长
+ */
 public class TaskBlockUpInfoActivity extends Activity {
 
     private final ExecutorService mExecutor = Executors.newCachedThreadPool();
@@ -77,16 +80,12 @@ public class TaskBlockUpInfoActivity extends Activity {
                 }
             }
 
-            Log.e("lk_test", getClass().getSimpleName() + ".call 000 ");
             List<TaskInfo> installPackages = new ArrayList<>();
             for (int i = 0; packageInfos != null && i < packageInfos.size(); i++) {
                 PackageInfo packageInfo = packageInfos.get(i);
                 if (SystemUtils.isSystemApp(packageInfo.applicationInfo)
                         || "com.motorola.screentimecontroller".equals(packageInfo.packageName)) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".call 111 " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                     continue;
-                } else {
-                    Log.e("lk_test", getClass().getSimpleName() + ".call 222 " + packageInfo.applicationInfo.packageName + " " + packageInfo.applicationInfo.uid);
                 }
                 TaskInfo taskInfo = new TaskInfo();
                 taskInfo.setAppName(packageInfo.applicationInfo.loadLabel(mPackageManager).toString());
@@ -96,6 +95,7 @@ public class TaskBlockUpInfoActivity extends Activity {
                 for (TaskBlockUpInfo taskBlockUpInfo : taskBlockUpInfos) {
                     if (taskBlockUpInfo.getPackageName() != null && taskBlockUpInfo.getPackageName().equals(taskInfo.getPackageName())
                             && taskBlockUpInfo.getUid() != null && taskBlockUpInfo.getUid().equals(taskInfo.getUid())) {
+//                            && taskBlockUpInfo.getUserId() != null && taskBlockUpInfo.getUserId().equals(taskInfo.getUserId())) {
                         taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
                     }
                 }
@@ -156,11 +156,7 @@ public class TaskBlockUpInfoActivity extends Activity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 TaskBlockUpInfo taskBlockUpInfo = new TaskBlockUpInfo();
                 taskBlockUpInfo.setPackageName(taskInfo.getPackageName());
-                try {
-                    taskBlockUpInfo.setUid(taskInfo.getUid());
-                } catch (Exception e) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".onTimeSet addResult 000 " + e.getMessage());
-                }
+                taskBlockUpInfo.setUid(taskInfo.getUid());
                 taskBlockUpInfo.setMaxUsage(TimePickerFragment.getTimeInMillis(hourOfDay, minute));
                 if (taskInfo.getBlockType() != TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_ALWAYS_ALLOW) {
                     taskBlockUpInfo.setBlockType(TaskBlockUpInfo.BLOCK_TYPE.TYPE_MAX_USAGE);
@@ -184,7 +180,7 @@ public class TaskBlockUpInfoActivity extends Activity {
                         Toast.makeText(TaskBlockUpInfoActivity.this, "设置失败", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
-                    Log.e("lk_test", getClass().getSimpleName() + ".onTimeSet addResult 222 " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });

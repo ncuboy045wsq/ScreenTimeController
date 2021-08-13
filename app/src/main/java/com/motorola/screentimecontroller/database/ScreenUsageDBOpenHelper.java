@@ -21,6 +21,7 @@ public class ScreenUsageDBOpenHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + TaskUsageInfoTable.TABLE_NAME + " (" +
                     TaskUsageInfoTable.PACKAGE_NAME + " TEXT," +
                     TaskUsageInfoTable.UID + " TEXT," +
+//                    TaskUsageInfoTable.USER_ID + " TEXT," +
                     TaskUsageInfoTable.START_TIME + " INTEGER," +
                     TaskUsageInfoTable.END_TIME + " INTEGER)";
 
@@ -54,7 +55,6 @@ public class ScreenUsageDBOpenHelper extends SQLiteOpenHelper {
             return;
         }
 
-        Log.e("lk_test", getClass().getSimpleName() + ".onUpgrade newVersion " + newVersion + " oldVersion " + oldVersion);
         db.execSQL(SQL_DELETE_TASK_USAGE_INFO_ENTRIES);
 
         onCreate(db);

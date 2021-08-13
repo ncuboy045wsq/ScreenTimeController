@@ -27,6 +27,9 @@ import motorola.core_services.screentimecontroller.bean.TaskBlockUpInfo;
 
 //import motorola.core_services.screentimecontroller.MotoExtendManager;
 
+/**
+ * 设置屏幕不可用时间段
+ */
 public class BlockUpTimeSettingActivity extends Activity {
 
     private long mStartTime = 0;
