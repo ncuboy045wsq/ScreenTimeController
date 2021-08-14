@@ -108,6 +108,11 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+        
+        findViewById(R.id.bt_stopList).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, BlockUpTimeListActivity.class);
+            startActivity(intent);
+        });
 
         loadTaskUsageInfo();
     }

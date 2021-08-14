@@ -99,6 +99,12 @@
                 android:text="@string/stop_time" />
 
             <Button
+                android:id="@+id/bt_stopList"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="显示停用时间列表" />
+
+            <Button
                 android:id="@+id/bt_alwayAllows"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
