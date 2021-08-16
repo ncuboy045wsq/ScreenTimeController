@@ -63,12 +63,15 @@ public class MotoAppScreenControlBlocker extends Activity {
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "add fail", Toast.LENGTH_SHORT).show();
             }
-
-            MotoExtendManager.getInstance(this).showKeyguardCredentialOfMainUser(this, "I am title", () -> {
-                if (DEBUG) {
-                    addMaxTime();
-                }
-            });
+            if (MotoExtendManager.getInstance(this).isMainUser(this)) {
+                addMaxTime();
+            } else {
+                MotoExtendManager.getInstance(this).showKeyguardCredentialOfMainUser(this, "I am title", () -> {
+                    if (DEBUG) {
+                        addMaxTime();
+                    }
+                });
+            }
         });
 
         IntentFilter filter = new IntentFilter();
