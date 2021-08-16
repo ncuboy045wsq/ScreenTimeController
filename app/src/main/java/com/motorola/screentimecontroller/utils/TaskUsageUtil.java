@@ -33,7 +33,7 @@ public class TaskUsageUtil {
     }
 
     public static String getWeekInscreaseFormat(long totalUsageWeek, long totalUsageLastWeek) {
-        DecimalFormat decimalFormat = new DecimalFormat(".00"); //构造方法的字符格式这里如果小数不足2位,会以0补足.
-        return decimalFormat.format((totalUsageWeek - totalUsageLastWeek) * 1.0f / totalUsageLastWeek);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00"); //构造方法的字符格式这里如果小数不足2位,会以0补足.
+        return decimalFormat.format((totalUsageWeek - totalUsageLastWeek) * 100.0f / totalUsageLastWeek) + "%";
     }
 }
