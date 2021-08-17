@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -53,6 +54,7 @@ public class MainActivity extends Activity {
      * 上周任务使用时长
      */
     private Map<Integer, Map<Integer, Long>> mTaskUsageInfosLastWeek;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

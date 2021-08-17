@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ public class TaskWhiteListActivity extends Activity {
     private WhiteListAdapter mWhiteListAdapter;
     private TaskListAdapter mTaskListAdapter;
 
+    private LinearLayout mLlContentContainer;
+
     private Handler myHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -65,6 +68,16 @@ public class TaskWhiteListActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_task_white_list);
+
+        mLlContentContainer = findViewById(R.id.ll_contentContainer);
+
+        MotoExtendManager.getInstance(this)
+                .showKeyguardCredentialOfMainUser(
+                        this,
+                        getString(R.string.enter_password),
+                        () -> {
+                            mLlContentContainer.setVisibility(View.VISIBLE);
+                        });
 
         ListView lvWhiteList = findViewById(R.id.lv_whiteList);
         ListView lvTaskList = findViewById(R.id.lv_taskList);

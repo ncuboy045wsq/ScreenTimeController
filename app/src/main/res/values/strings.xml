@@ -16,4 +16,7 @@
     <string name="total_screen_usage_label">总屏幕使用时间</string>
     <string name="every_Week">每周</string>
     <string name="every_day">每日</string>
+    <string name="enter_password">请输入f密码</string>
+    <string name="ok">请输入f密码</string>
+    <string name="cancel">请输入f密码</string>
 </resources>

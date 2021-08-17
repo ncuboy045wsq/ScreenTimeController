@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -34,11 +35,25 @@ public class BlockUpTimeSettingActivity extends Activity {
 
     private long mStartTime = 0;
 
+    private LinearLayout mLlContentContainer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_block_up_time);
+
+        mLlContentContainer = findViewById(R.id.ll_contentContainer);
+
+        MotoExtendManager.getInstance(this)
+                .showKeyguardCredentialOfMainUser(
+                        this,
+                        getString(R.string.enter_password),
+                        () -> {
+                            // Auth
+                            Toast.makeText(this, "Authentication successful", Toast.LENGTH_SHORT).show();
+                            mLlContentContainer.setVisibility(View.VISIBLE);
+                        });
 
         findViewById(R.id.bt_setBlockUpTime).setOnClickListener(new View.OnClickListener() {
             @Override

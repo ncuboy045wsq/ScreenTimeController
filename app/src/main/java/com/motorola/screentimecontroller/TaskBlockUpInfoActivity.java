@@ -1,8 +1,11 @@
 package com.motorola.screentimecontroller;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -48,6 +52,11 @@ public class TaskBlockUpInfoActivity extends Activity {
     private final ExecutorService mExecutor = Executors.newCachedThreadPool();
     private ListView mLlViewAllTasks;
     private AvailableTaskAdapter mAvailableTaskAdapter;
+
+    /**
+     * 所有ui控件的控制器
+     */
+    private LinearLayout mLlContentContainer;
 
     private Handler myHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -97,6 +106,8 @@ public class TaskBlockUpInfoActivity extends Activity {
                             && taskBlockUpInfo.getUid() != null && taskBlockUpInfo.getUid().equals(taskInfo.getUid())) {
 //                            && taskBlockUpInfo.getUserId() != null && taskBlockUpInfo.getUserId().equals(taskInfo.getUserId())) {
                         taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
+                        taskInfo.setBlockType(taskBlockUpInfo.getBlockType());
+                        taskInfo.setServer(true);
                     }
                 }
                 installPackages.add(taskInfo);
@@ -112,6 +123,9 @@ public class TaskBlockUpInfoActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_task_block_up_info);
+
+        mLlContentContainer = findViewById(R.id.ll_contentContainer);
+        mLlContentContainer.setVisibility(View.GONE);
 
         mExecutor.execute(new FutureTask<List<TaskInfo>>(new MyCaller(getApplicationContext().getPackageManager())) {
             @Override
@@ -141,6 +155,35 @@ public class TaskBlockUpInfoActivity extends Activity {
                 Toast.makeText(TaskBlockUpInfoActivity.this, "请输入限制的时长", Toast.LENGTH_SHORT).show();
             }
         });
+
+        showPasswordDialog();
+    }
+
+    private void showPasswordDialog() {
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage(R.string.enter_password)
+//                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//                    }
+//                })
+//                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        finish();
+//                    }
+//                });
+//        // Create the AlertDialog object and return it
+//        builder.create().show();
+
+        MotoExtendManager.getInstance(TaskBlockUpInfoActivity.this)
+                .showKeyguardCredentialOfMainUser(
+                        TaskBlockUpInfoActivity.this,
+                        getString(R.string.enter_password),
+                        () -> {
+                            // Auth
+                            mLlContentContainer.setVisibility(View.VISIBLE);
+                        });
     }
 
     private void showTimePicker(String tag, TaskInfo taskInfo) {
@@ -151,6 +194,9 @@ public class TaskBlockUpInfoActivity extends Activity {
         }
 
         TimePickerFragment timePickerFragment = new TimePickerFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(TimePickerFragment.KEY_24_HOUR_FORMAT, true);
+        timePickerFragment.setArguments(args);
         timePickerFragment.setOnTimeSetListener(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -163,17 +209,16 @@ public class TaskBlockUpInfoActivity extends Activity {
                 }
                 try {
                     Long result = 0l;
-                    if (taskInfo.getMaxUsage() == 0) {
-                        result = MotoExtendManager.getInstance(TaskBlockUpInfoActivity.this).addTaskBlockUpInfo(taskBlockUpInfo);
-                    } else {
+                    if (taskInfo.isServer()) {
                         result = MotoExtendManager.getInstance(TaskBlockUpInfoActivity.this).updateTaskBlockUpInfo(taskBlockUpInfo);
+                    } else {
+                        result = MotoExtendManager.getInstance(TaskBlockUpInfoActivity.this).addTaskBlockUpInfo(taskBlockUpInfo);
                     }
 
                     if (result > 0) {
                         Toast.makeText(TaskBlockUpInfoActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
                         taskInfo.setMaxUsage(taskBlockUpInfo.getMaxUsage());
                         mAvailableTaskAdapter.notifyDataSetChanged();
-
                     } else if (result == ErrorCode.DATA_CONFLICT) {
                         Toast.makeText(TaskBlockUpInfoActivity.this, "设置失败: 存在重复的设置", Toast.LENGTH_SHORT).show();
                     } else {
@@ -185,6 +230,13 @@ public class TaskBlockUpInfoActivity extends Activity {
             }
         });
         timePickerFragment.show(getFragmentManager(), "time_pickerer");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+        }
     }
 
     private class AvailableTaskAdapter extends BaseAdapter {
