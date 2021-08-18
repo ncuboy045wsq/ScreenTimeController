@@ -11,8 +11,11 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.motorola.screentimecontroller.database.dao.TaskUsageInfoDao;
+import com.motorola.screentimecontroller.model.ScreenTimeControllerModel;
+import com.motorola.screentimecontroller.utils.TimeUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import motorola.core_services.screentimecontroller.IScreenTimeInfoAidl;
@@ -65,6 +68,37 @@ public class ScreenTimeControllerService extends Service {
                 taskUsageInfoBundleList.add(taskUsageInfoList.get(i).toBundle());
             }
             return taskUsageInfoBundleList;
+        }
+
+        @Override
+        public long getTaskUsageToday(String pkgName, int uid) throws RemoteException {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            long firstMillisOfDay = calendar.getTimeInMillis();
+
+            List<TaskUsageInfo> taskUsageInfoList = mTaskUsageInfoDao.query(pkgName, uid, firstMillisOfDay, firstMillisOfDay + TimeUtils.ONE_DAY);
+
+            if (taskUsageInfoList == null) {
+                return 0;
+            }
+
+            long totalTime = 0;
+            for (TaskUsageInfo taskUsageInfo : taskUsageInfoList) {
+                totalTime += taskUsageInfo.getDuration();
+                if (taskUsageInfo.getStartTime() < firstMillisOfDay) {
+                    totalTime -= (firstMillisOfDay - taskUsageInfo.getStartTime());
+                }
+                if (taskUsageInfo.getEndTime() > firstMillisOfDay + TimeUtils.ONE_DAY) {
+                    totalTime -= (taskUsageInfo.getEndTime() - (firstMillisOfDay + TimeUtils.ONE_DAY));
+                }
+            }
+
+            return totalTime;
         }
     }
 

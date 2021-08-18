@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import motorola.core_services.misc.MotoExtendManager;
+import motorola.core_services.screentimecontroller.bean.ScreenAllowTime;
+
 public class MainActivity extends Activity {
     private ScreenTimeControllerModel mScreenTimeControllerModel;
     private ScreenTimeControllerService.ScreenTimeControllerBinder screenTimeControllerBinder;
@@ -65,6 +68,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_main);
+
+//        init();
 
         mScreenTimeControllerModel = new ScreenTimeControllerModel(this);
 
@@ -113,7 +118,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-        
+
         findViewById(R.id.bt_stopList).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, BlockUpTimeListActivity.class);
             startActivity(intent);
@@ -137,6 +142,52 @@ public class MainActivity extends Activity {
     private String getDisplayTextOfSwitch() {
         int value = MotorolaSettings.System.getInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, 0);
         return value == 1 ? "已打开" : "已关闭";
+    }
+
+    long deleteAllowTimeId;
+
+    private void init() {
+
+        Button btAddAllow = findViewById(R.id.bt_addAllow);
+        btAddAllow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+                screenAllowTime.setStartTime(System.currentTimeMillis());
+                screenAllowTime.setEndTime(System.currentTimeMillis() + 10 * 1000);
+                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+
+                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
+                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
+                deleteAllowTimeId = MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+
+                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
+                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
+                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+            }
+        });
+
+        Button btRemoveAllow = findViewById(R.id.bt_removeAllow);
+        btRemoveAllow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+                screenAllowTime.setId(deleteAllowTimeId);
+                MotoExtendManager.getInstance(MainActivity.this).removeScreenAllowTime(screenAllowTime);
+            }
+        });
+
+        Button btUpdateAllow = findViewById(R.id.bt_updateAllow);
+        btUpdateAllow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+                screenAllowTime.setStartTime(0);
+                screenAllowTime.setEndTime(999);
+                MotoExtendManager.getInstance(MainActivity.this).updateScreenAllowTime(screenAllowTime);
+            }
+        });
     }
 
     private void loadTaskUsageInfo() {

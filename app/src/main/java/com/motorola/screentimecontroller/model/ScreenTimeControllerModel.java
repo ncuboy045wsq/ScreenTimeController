@@ -132,7 +132,7 @@ public class ScreenTimeControllerModel {
                 totalTime -= (startTime - taskUsageInfo.getStartTime());
             }
             if (taskUsageInfo.getEndTime() > endTime) {
-                totalTime -= (startTime - taskUsageInfo.getEndTime());
+                totalTime -= (taskUsageInfo.getEndTime() - endTime);
             }
         }
 

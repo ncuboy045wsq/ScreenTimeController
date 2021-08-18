@@ -123,6 +123,24 @@
                 android:layout_height="50dp"
                 android:text="@string/application_time_limit" />
 
+<!--            <Button-->
+<!--                android:id="@+id/bt_addAllow"-->
+<!--                android:visibility="gone"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <Button-->
+<!--                android:visibility="gone"-->
+<!--                android:id="@+id/bt_removeAllow"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <Button-->
+<!--                android:visibility="gone"-->
+<!--                android:id="@+id/bt_updateAllow"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
