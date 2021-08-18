@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.motorola.android.provider.MotorolaSettings;
 import com.motorola.screentimecontroller.model.ScreenTimeControllerModel;
 import com.motorola.screentimecontroller.utils.TaskUsageUtil;
 import com.motorola.screentimecontroller.utils.TimeUtils;
@@ -20,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import motorola.core_services.misc.MotoExtendManager;
 
 public class MainActivity extends Activity {
     private ScreenTimeControllerModel mScreenTimeControllerModel;
@@ -45,6 +48,8 @@ public class MainActivity extends Activity {
      * 最后更新时间
      */
     private TextView mTvUpdateTime;
+
+    private Button mBtnToggleAppScreenControl;
 
     /**
      * 本周任务使用时长
@@ -116,7 +121,25 @@ public class MainActivity extends Activity {
             startActivity(intent);
         });
 
+        mBtnToggleAppScreenControl = (Button) findViewById(R.id.btn_toggle_switch);
+        mBtnToggleAppScreenControl.setText(getDisplayTextOfSwitch());
+        mBtnToggleAppScreenControl.setOnClickListener(v -> {
+            MotoExtendManager.getInstance(this).isMainUser(this);
+            int value = MotorolaSettings.System.getInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, 0);
+            int newValue = value == 1 ? 0 : 1;
+            boolean result = MotorolaSettings.System.putInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, newValue);
+            if (result) {
+                mBtnToggleAppScreenControl.setText(getDisplayTextOfSwitch());
+            }
+        });
+
+
         loadTaskUsageInfo();
+    }
+
+    private String getDisplayTextOfSwitch() {
+        int value = MotorolaSettings.System.getInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, 0);
+        return value == 1 ? "已打开" : "已关闭";
     }
 
     private void loadTaskUsageInfo() {

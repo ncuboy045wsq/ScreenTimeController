@@ -11,6 +11,8 @@
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC_INTERNAL" />
 
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,9 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenTimeController">
 
-        <uses-library
-            android:name="moto-core_services"
-            android:required="true" />
+        <uses-library android:name="moto-core_services" android:required="true"/>
+        <uses-library android:name="moto-settings" android:required="true"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

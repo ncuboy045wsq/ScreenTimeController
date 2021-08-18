@@ -94,6 +94,12 @@
                 android:text="@string/update_time_regex" />
 
             <Button
+                android:id="@+id/btn_toggle_switch"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="开关屏控" />
+
+            <Button
                 android:id="@+id/bt_stopTime"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
