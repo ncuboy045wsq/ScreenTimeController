@@ -29,7 +29,6 @@ public class MotoAppScreenControlBlocker extends Activity {
     private static final boolean DEBUG = true;
     private static final String TAG = "MotoAppScreenBlocker";
     private static final int REQUEST_CODE_KEYGUARD = 1;
-    private KeyguardManager mKeyguardManager;
     private Handler mHandler;
 
     private EditText mEtInput;
@@ -43,6 +42,7 @@ public class MotoAppScreenControlBlocker extends Activity {
 
         TextView textView = (TextView) findViewById(R.id.tv_blocker_display);
         Button button = (Button) findViewById(R.id.btn_blocker_addtime);
+        mHandler = new Handler(getMainLooper());
 
         mEtInput = (EditText) findViewById(R.id.et_blocker_input);
 
@@ -66,10 +66,12 @@ public class MotoAppScreenControlBlocker extends Activity {
             if (MotoExtendManager.getInstance(this).isMainUser(this)) {
                 addMaxTime();
             } else {
-                MotoExtendManager.getInstance(this).showKeyguardCredentialOfMainUser(this, "I am title", () -> {
+                MotoExtendManager.getInstance(this).showKeyguardCredentialOfMainUser(this, "I am title", mHandler, () -> {
                     if (DEBUG) {
                         addMaxTime();
                     }
+                }, () -> {
+                    Toast.makeText(this, "验证失败", Toast.LENGTH_SHORT).show();
                 });
             }
         });

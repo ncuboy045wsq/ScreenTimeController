@@ -159,6 +159,8 @@ public class TaskBlockUpInfoActivity extends Activity {
         showPasswordDialog();
     }
 
+    private Handler mHandler = new Handler(getMainLooper());
+
     private void showPasswordDialog() {
 
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -180,10 +182,12 @@ public class TaskBlockUpInfoActivity extends Activity {
                 .showKeyguardCredentialOfMainUser(
                         TaskBlockUpInfoActivity.this,
                         getString(R.string.enter_password),
+                        mHandler,
                         () -> {
                             // Auth
                             mLlContentContainer.setVisibility(View.VISIBLE);
-                        });
+                        },
+                        () -> {});
     }
 
     private void showTimePicker(String tag, TaskInfo taskInfo) {

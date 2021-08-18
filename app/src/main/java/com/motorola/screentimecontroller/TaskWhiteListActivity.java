@@ -62,6 +62,7 @@ public class TaskWhiteListActivity extends Activity {
         }
     };
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -75,9 +76,11 @@ public class TaskWhiteListActivity extends Activity {
                 .showKeyguardCredentialOfMainUser(
                         this,
                         getString(R.string.enter_password),
+                        myHandler,
                         () -> {
                             mLlContentContainer.setVisibility(View.VISIBLE);
-                        });
+                        },
+                        () -> {});
 
         ListView lvWhiteList = findViewById(R.id.lv_whiteList);
         ListView lvTaskList = findViewById(R.id.lv_taskList);

@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -36,6 +37,7 @@ public class BlockUpTimeSettingActivity extends Activity {
     private long mStartTime = 0;
 
     private LinearLayout mLlContentContainer;
+    private Handler mHandler = new Handler(getMainLooper());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +51,13 @@ public class BlockUpTimeSettingActivity extends Activity {
                 .showKeyguardCredentialOfMainUser(
                         this,
                         getString(R.string.enter_password),
+                        mHandler,
                         () -> {
                             // Auth
                             Toast.makeText(this, "Authentication successful", Toast.LENGTH_SHORT).show();
                             mLlContentContainer.setVisibility(View.VISIBLE);
-                        });
+                        },
+                        () -> {});
 
         findViewById(R.id.bt_setBlockUpTime).setOnClickListener(new View.OnClickListener() {
             @Override

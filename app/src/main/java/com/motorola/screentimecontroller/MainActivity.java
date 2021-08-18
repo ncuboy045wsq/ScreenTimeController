@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import motorola.core_services.misc.MotoExtendManager;
-
 public class MainActivity extends Activity {
     private ScreenTimeControllerModel mScreenTimeControllerModel;
     private ScreenTimeControllerService.ScreenTimeControllerBinder screenTimeControllerBinder;
@@ -124,7 +122,6 @@ public class MainActivity extends Activity {
         mBtnToggleAppScreenControl = (Button) findViewById(R.id.btn_toggle_switch);
         mBtnToggleAppScreenControl.setText(getDisplayTextOfSwitch());
         mBtnToggleAppScreenControl.setOnClickListener(v -> {
-            MotoExtendManager.getInstance(this).isMainUser(this);
             int value = MotorolaSettings.System.getInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, 0);
             int newValue = value == 1 ? 0 : 1;
             boolean result = MotorolaSettings.System.putInt(getContentResolver(), MotorolaSettings.System.APP_SCREEN_CONTROL, newValue);
