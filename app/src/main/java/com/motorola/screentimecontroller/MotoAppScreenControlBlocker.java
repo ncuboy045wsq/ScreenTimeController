@@ -28,6 +28,7 @@ import motorola.core_services.screentimecontroller.bean.TaskBlockUpInfo;
 public class MotoAppScreenControlBlocker extends Activity {
     private static final boolean DEBUG = true;
     private static final String TAG = "MotoAppScreenBlocker";
+    private static final String ACTION_TOGGLE_APP_SCREEN_CONTROL = "motorola.action.toggle_app_screen_control";
     private static final int REQUEST_CODE_KEYGUARD = 1;
     private Handler mHandler;
 
@@ -78,6 +79,7 @@ public class MotoAppScreenControlBlocker extends Activity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
+        filter.addAction(ACTION_TOGGLE_APP_SCREEN_CONTROL);
         registerReceiver(mReceiver, filter);
     }
 
@@ -117,6 +119,14 @@ public class MotoAppScreenControlBlocker extends Activity {
                     Log.d(TAG, "blocker finish itself due to date changed");
                 }
                 finish();
+            } else if (ACTION_TOGGLE_APP_SCREEN_CONTROL.equals(intent.getAction())) {
+                boolean on = intent.getBooleanExtra("key_switch", false);
+                if (!on) {
+                    if (DEBUG) {
+                        Log.d(TAG, "blocker finish itself due to close app screen control");
+                    }
+                    finish();
+                }
             }
         }
     };
