@@ -96,11 +96,11 @@ public class BlockUpTimeSettingActivity extends Activity {
                         long addCount = MotoExtendManager.getInstance(BlockUpTimeSettingActivity.this).addScreenBlockUpTime(screenBlockUpTime);
 
                         if (addCount > 0) {
-                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set success " + addCount, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set success", Toast.LENGTH_SHORT).show();
                         } else if (addCount == -1001) {
                             Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed: Time is exist.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed: unexpected error." + addCount, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed: unexpected error.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         Toast.makeText(BlockUpTimeSettingActivity.this, "Set Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
