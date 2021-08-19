@@ -228,15 +228,11 @@ public class TaskWhiteListActivity extends Activity {
                     long updateCount = MotoExtendManager.getInstance(getApplicationContext()).updateTaskBlockUpInfo(taskBlockUpInfo);
 
                     if (updateCount > 0) {
-                        if (mWhiteList.remove(taskInfo)) {
-                            Toast.makeText(TaskWhiteListActivity.this, "remove success 111 " + position, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(TaskWhiteListActivity.this, "remove failed 111 " + position, Toast.LENGTH_SHORT).show();
-                        }
-
+                        mWhiteList.remove(taskInfo);
                         notifyDataSetChanged();
                         mTaskListAdapter.mTaskInfoList.add(0, taskInfo);
                         mTaskListAdapter.notifyDataSetChanged();
+                        Toast.makeText(TaskWhiteListActivity.this, "Remove success" + position, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(TaskWhiteListActivity.this, "删除失败: " + updateCount, Toast.LENGTH_SHORT).show();
                     }
@@ -302,14 +298,11 @@ public class TaskWhiteListActivity extends Activity {
                     } catch (Exception e) {
                     }
                     if (updateCount > 0) {
-                        if (mTaskInfoList.remove(taskInfo)) {
-                            Toast.makeText(TaskWhiteListActivity.this, "Remove task success " + updateCount, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(TaskWhiteListActivity.this, "Remove task failed " + updateCount, Toast.LENGTH_SHORT).show();
-                        }
+                        mTaskInfoList.remove(taskInfo);
                         notifyDataSetChanged();
                         mWhiteListAdapter.mWhiteList.add(0, taskInfo);
                         mWhiteListAdapter.notifyDataSetChanged();
+                        Toast.makeText(TaskWhiteListActivity.this, "Set success " + updateCount, Toast.LENGTH_SHORT).show();
                     } else if (updateCount == ErrorCode.DATA_CONFLICT) {
                         Toast.makeText(TaskWhiteListActivity.this, "添加白名单失败: 重复设置了.", Toast.LENGTH_SHORT).show();
                     } else {
