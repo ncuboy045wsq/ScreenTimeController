@@ -148,46 +148,46 @@ public class MainActivity extends Activity {
 
     private void init() {
 
-        Button btAddAllow = findViewById(R.id.bt_addAllow);
-        btAddAllow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
-                screenAllowTime.setStartTime(System.currentTimeMillis());
-                screenAllowTime.setEndTime(System.currentTimeMillis() + 10 * 1000);
-                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
-
-                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
-                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
-                deleteAllowTimeId = MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
-
-                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
-                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
-                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
-            }
-        });
-
-        Button btRemoveAllow = findViewById(R.id.bt_removeAllow);
-        btRemoveAllow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
-                screenAllowTime.setId(deleteAllowTimeId);
-                MotoExtendManager.getInstance(MainActivity.this).removeScreenAllowTime(screenAllowTime);
-            }
-        });
-
-        Button btUpdateAllow = findViewById(R.id.bt_updateAllow);
-        btUpdateAllow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
-                screenAllowTime.setStartTime(0);
-                screenAllowTime.setEndTime(999);
-                MotoExtendManager.getInstance(MainActivity.this).updateScreenAllowTime(screenAllowTime);
-            }
-        });
+//        Button btAddAllow = findViewById(R.id.bt_addAllow);
+//        btAddAllow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+//                screenAllowTime.setStartTime(System.currentTimeMillis());
+//                screenAllowTime.setEndTime(System.currentTimeMillis() + 10 * 1000);
+//                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+//
+//                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
+//                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
+//                deleteAllowTimeId = MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+//
+//                screenAllowTime.setStartTime(screenAllowTime.getEndTime() + 10 * 1000);
+//                screenAllowTime.setEndTime(screenAllowTime.getStartTime() + 10 * 1000);
+//                MotoExtendManager.getInstance(MainActivity.this).addScreenAllowTime(screenAllowTime);
+//            }
+//        });
+//
+//        Button btRemoveAllow = findViewById(R.id.bt_removeAllow);
+//        btRemoveAllow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+//                screenAllowTime.setId(deleteAllowTimeId);
+//                MotoExtendManager.getInstance(MainActivity.this).removeScreenAllowTime(screenAllowTime);
+//            }
+//        });
+//
+//        Button btUpdateAllow = findViewById(R.id.bt_updateAllow);
+//        btUpdateAllow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ScreenAllowTime screenAllowTime = new ScreenAllowTime();
+//                screenAllowTime.setStartTime(0);
+//                screenAllowTime.setEndTime(999);
+//                MotoExtendManager.getInstance(MainActivity.this).updateScreenAllowTime(screenAllowTime);
+//            }
+//        });
     }
 
     private void loadTaskUsageInfo() {
