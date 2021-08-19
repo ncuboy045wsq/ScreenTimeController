@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -37,7 +38,7 @@ public class BlockUpTimeSettingActivity extends Activity {
     private long mStartTime = 0;
 
     private LinearLayout mLlContentContainer;
-    private Handler mHandler = new Handler(getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

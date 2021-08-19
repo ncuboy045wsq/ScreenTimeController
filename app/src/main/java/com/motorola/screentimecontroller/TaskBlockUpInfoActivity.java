@@ -159,7 +159,7 @@ public class TaskBlockUpInfoActivity extends Activity {
         showPasswordDialog();
     }
 
-    private Handler mHandler = new Handler(getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private void showPasswordDialog() {
 

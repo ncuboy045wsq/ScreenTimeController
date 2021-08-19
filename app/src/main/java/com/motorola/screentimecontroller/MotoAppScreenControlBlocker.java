@@ -65,10 +65,16 @@ public class MotoAppScreenControlBlocker extends Activity {
                 Toast.makeText(this, "add fail", Toast.LENGTH_SHORT).show();
             }
             if (MotoExtendManager.getInstance(this).isMainUser(this)) {
+                if (DEBUG) {
+                    Log.d(TAG, "directly add max time");
+                }
                 addMaxTime();
             } else {
                 MotoExtendManager.getInstance(this).showKeyguardCredentialOfMainUser(this, "I am title", mHandler, () -> {
                     if (DEBUG) {
+                        if (DEBUG) {
+                            Log.d(TAG, "add max time by credential");
+                        }
                         addMaxTime();
                     }
                 }, () -> {
